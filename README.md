@@ -1,0 +1,1 @@
+# gitlab-ci-push-docker-image
