@@ -1,0 +1,29 @@
+stages:
+  - build
+  - push
+
+build:
+  stage: build
+  tags:
+    - docker,machine
+  script:
+    - docker pull nexus-server.tld:8082/image:tag || true
+    - docker build --cache-from nexus-server.tld:8082/image:tag --tag nexus-server.tld:8082/image:tag --tag user/image:tag .
+
+push-nexus:
+  stage: push
+  tags:
+    - docker,machine
+  script:
+    - |
+      docker login nexus-server.tld:8082 -u $NEXUS_USER -p $NEXUS_PASS
+      docker push nexus-server.tld:8082/image:tag
+
+push-docker-hub:
+  stage: push
+  tags:
+    - docker,machine
+  script:
+    - |
+      docker login -u $DOCKER_USER -p $DOCKER_PASS
+      docker push aarto/image:tag
